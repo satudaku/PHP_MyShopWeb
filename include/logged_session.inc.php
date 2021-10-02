@@ -2,6 +2,6 @@
 <?php
 session_start();
 if (!isset($_SESSION['id'])) {
-    header("location:Login.php");
+    header("location:login.php?user=login_first");
     exit();
 }

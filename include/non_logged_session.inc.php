@@ -2,6 +2,6 @@
 <?php
 session_start();
 if (isset($_SESSION['id'])) {
-    header("location:Topup_balance.php");
+    header("location:topup_balance.php?user=logout_first");
     exit();
 }

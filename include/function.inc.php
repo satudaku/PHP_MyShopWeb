@@ -251,13 +251,13 @@ function empty_input_product($product, $shipping_address, $product_price) {
     return $result;
 }
 
-# Validation for product price input
-function invalid_integer($product_price) {
-    if (!filter_var($product_price, FILTER_VALIDATE_INT)) {
+# Input validation for interger
+function invalid_integer($int) {
+    if (!filter_var($int, FILTER_VALIDATE_INT)) {
         return false;
     }
     else {
-        return $product_price;
+        return $int;
     }
 }
 
@@ -341,7 +341,7 @@ function order_product($conn, $id, $product, $shipping_address, $product_price) 
 ############### Success Create Order #################
 ######################################################
 
-# Find data row from table order_status 
+# Find data record from table order_status 
 function find_status_order($conn, $order_id) {
     $sql = "SELECT * FROM order_status WHERE order_id = ?;";
     $stmt = mysqli_stmt_init($conn);
@@ -356,7 +356,7 @@ function find_status_order($conn, $order_id) {
         mysqli_stmt_execute($stmt);
         $result_data = mysqli_stmt_get_result($stmt);
 
-        # Return row which has the same given order_status_id 
+        # Return record which has the same given order_status_id 
         if ($row = mysqli_fetch_assoc($result_data)) {
             mysqli_stmt_close($stmt);
             return $row;
@@ -369,7 +369,7 @@ function find_status_order($conn, $order_id) {
     }
 }
 
-# Find data row from table order_topup
+# Find data record from table order_topup
 function find_topup_order($conn, $order_topup_id) {
     $sql = "SELECT * FROM order_topup WHERE order_topup_id = ?;";
     $stmt = mysqli_stmt_init($conn);
@@ -384,7 +384,7 @@ function find_topup_order($conn, $order_topup_id) {
         mysqli_stmt_execute($stmt);
         $result_data = mysqli_stmt_get_result($stmt);
 
-        # Return row which has the same given order_topup_id
+        # Return record which has the same given order_topup_id
         if ($row = mysqli_fetch_assoc($result_data)) {
             mysqli_stmt_close($stmt);
             return $row;
@@ -397,7 +397,7 @@ function find_topup_order($conn, $order_topup_id) {
     }
 }
 
-# Find data row from table order_product
+# Find data record from table order_product
 function find_product_order($conn, $order_product_id) {
     $sql = "SELECT * FROM order_product WHERE order_product_id = ?;";
     $stmt = mysqli_stmt_init($conn);
@@ -412,7 +412,7 @@ function find_product_order($conn, $order_product_id) {
         mysqli_stmt_execute($stmt);
         $result_data = mysqli_stmt_get_result($stmt);
 
-        # Return row which has the same given order_topup_id
+        # Return record which has the same given order_topup_id
         if ($row = mysqli_fetch_assoc($result_data)) {
             mysqli_stmt_close($stmt);
             return $row;
@@ -505,13 +505,12 @@ function pay_order($conn, $id, $order_id) {
         }
         
         # Check if payment made before due time
-        $order_paid_time = date('Y-m-d H:i:s');     # Current time
-        if ($order_id_exist["payment_due_time"] <= $order_paid_time) {
-            header("location: ../pay_order.php?error=payment_overtime");
+        $payment_overdue = check_payment_due($conn, $order_id, $order_id_exist["payment_due_time"]);
+        if ($payment_overdue === true) {
+            header("location: ". $_SERVER['HTTP_REFERER'] . "&error=payment_overtime");
             exit();
         }
         else {
-
             # Update order_paid_time in order_status table to current time
             $sql = "UPDATE order_status SET order_paid_time = ? WHERE order_id = ?;";
             $stmt = mysqli_stmt_init($conn);
@@ -526,25 +525,45 @@ function pay_order($conn, $id, $order_id) {
             }
 
             # Update order_status to paid
-            $sql = "UPDATE order_status SET order_status = ? WHERE order_id = ?;";
-            if (!mysqli_stmt_prepare($stmt, $sql)) {
-                header ("location: ../pay_order.php?error=stmt_failed");
-                exit();
-            }
-            else {
-                $order_status = "paid";
-                # Bind parameters to the place holder
-                mysqli_stmt_bind_param($stmt, "si", $order_status, $order_id);
-                # Run parameters inside database
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_close($stmt);
-                header("location: ../order_history.php");
-                exit();
-            }       
+            $updated_order_status = "paid";
+            change_order_status($conn, $order_id, $updated_order_status);
+            header("location: ../order_history.php");
         }
     }
 }
 
+# Check if payment overdue
+function check_payment_due($conn, $order_id, $payment_due_time) {
+    $result = true;
+    $order_paid_time = date('Y-m-d H:i:s');     # Current time
+    # If payment due time overdue
+    if ($payment_due_time < $order_paid_time) {
+        $updated_order_status = "cancelled";    # Changed variable
+        # Update order_status to cancelled
+        change_order_status($conn, $order_id, $updated_order_status);
+        return $result;
+    }
+    else {
+        $result = false;
+        return $result;
+    }
+}
+
+# Update order_status record to updated_order_status in order_status table
+function change_order_status($conn, $order_id, $updated_order_status) {
+    $sql = "UPDATE order_status SET order_status = ? WHERE order_id = ?;";
+    $stmt = mysqli_stmt_init($conn);
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        header ("location: ../{$_SERVER['REQUEST_URI']}?error=stmt_failed22");
+        exit();
+    }
+    else {
+        mysqli_stmt_bind_param($stmt, "si", $updated_order_status, $order_id);
+        # Run parameters inside database
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+}
 
 ######################################################
 ############## C H E C K - P A Y M E N T #############
@@ -566,6 +585,7 @@ function check_status($conn, $order_id) {
         # Run parameters inside database
         mysqli_stmt_execute($stmt);
         $result_data = mysqli_stmt_get_result($stmt);
+        mysqli_stmt_close($stmt);
         
         # Return result, false if order paid or cancelled or failed
         $result = false;
@@ -574,40 +594,22 @@ function check_status($conn, $order_id) {
             # Check order status
             $status_array = array("paid", "cancelled", "failed");
             if (in_array($row["order_status"], $status_array)) {
-                mysqli_stmt_close($stmt);
                 return $result;
             }
             if ($row["order_status"] == "unpaid") {
-                # Compare payment due time with current time
-                $current_time = date('Y-m-d H:i:s'); 
-                if ($row["payment_due_time"] > $current_time) {
-                    mysqli_stmt_close($stmt);
-                    $result = true;
+                $payment_due_time = $row["payment_due_time"];
+                # Check if payment already overdue
+                $payment_overdue = check_payment_due($conn, $order_id, $payment_due_time);
+                if ($payment_overdue === true) {
                     return $result;
                 }
                 else {
-                    # Update order status to cancelled
-                    $sql = "UPDATE order_status SET order_status = ? WHERE order_id = ?;";
-                    if (!mysqli_stmt_prepare($stmt, $sql)) {
-                        header ("location: ../pay_order.php?error=stmt_failed");
-                        exit();
-                    }
-                    else {
-                        $order_status = "cancelled";
-                        # Bind parameters to the place holder
-                        mysqli_stmt_bind_param($stmt, "si", $order_status, $order_id);
-                        # Run parameters inside database
-                        mysqli_stmt_execute($stmt);
-                        mysqli_stmt_close($stmt);
-                        return $result;
-                    }
+                    $result = true;
+                    return $result;
                 }
             }
         }
-        else {
-            mysqli_stmt_close($stmt);
-            return $result;
-        }
+        return $result;
     }
 }
 
@@ -629,15 +631,16 @@ function count_unpaid_order($conn, $id) {
         while ($row = mysqli_fetch_assoc($result_data)) {
             $data[] = $row;
         }
-        if (!is_array($row)) {
+        if (!isset($data)) {
             return $unpaid_order;
             exit();
         }
         else {
             foreach ($data as $row) {
+                # for each check status return true, add count to unpaid_order
                 if (check_status($conn, $row["order_id"]) === true) {
                     $unpaid_order++;
-                }
+                }   
             }
             return $unpaid_order;
         }
@@ -649,17 +652,19 @@ function count_unpaid_order($conn, $id) {
 ############## O R D E R - H I S T O R Y #############
 ######################################################
 
-# Get data row from table order_status 
-function get_order($conn, $id) {
-    $sql = "SELECT * FROM order_status WHERE customer_id = ?;";
+# Get data record from table order_status 
+function get_order($conn, $id, $page, $num_result_on_page) {
+    $sql = "SELECT * FROM order_status WHERE customer_id = ? ORDER BY order_placed_time DESC LIMIT ?,?;";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        header ("location: ../topup_order.php?error=stmt_failed3");
+        header ("location: ../order_history.php?error=stmt_failed3");
         exit();
     }
     else {
+        # Calculate the page to get the results we need from our table.
+	    $calculate_page = ($page - 1) * $num_result_on_page;
         # Bind  parameters to the placeholder
-        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_bind_param($stmt, "iii", $id, $calculate_page, $num_result_on_page);
         # Run parameters inside database
         mysqli_stmt_execute($stmt);
         $result_data = mysqli_stmt_get_result($stmt);
@@ -668,6 +673,82 @@ function get_order($conn, $id) {
             $data[] = $row;
         }
         return $data;
+    }
+}
+
+# Get the total number of order records from given id
+function count_order($conn, $id) {
+    $sql = "SELECT * FROM order_status WHERE customer_id = ?;";
+    $stmt = mysqli_stmt_init($conn);
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        header ("location: ../order_history.php?error=stmt_failed");
         exit();
+    }
+    else {
+        # Bind  parameters to the placeholder
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        # Run parameters inside database
+        mysqli_stmt_execute($stmt);
+        $result_data = mysqli_stmt_get_result($stmt);
+        $count_order = mysqli_num_rows($result_data);
+        mysqli_stmt_close($stmt);
+        return $count_order;
+    }
+}
+
+# Search bar for order history using order ID
+function search_order($conn, $id, $keyword, $page, $num_result_on_page) {
+    $sql = "SELECT * FROM order_status WHERE customer_id = ? AND order_id LIKE ? ORDER BY order_placed_time DESC LIMIT ?,?;";
+    $stmt = mysqli_stmt_init($conn);
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        header ("location: ../order_history.php?error=stmt_failed");
+        exit();
+    }
+    else {
+        # Calculate the page to get the results we need from our table.
+	    $calculate_page = ($page - 1) * $num_result_on_page;
+        # Bind  parameters to the placeholder
+        mysqli_stmt_bind_param($stmt, "isii", $id, $keyword, $calculate_page, $num_result_on_page);
+        # Run parameters inside database
+        mysqli_stmt_execute($stmt);
+        $result_data = mysqli_stmt_get_result($stmt);
+        mysqli_stmt_close($stmt);
+        # Fetch search data into array
+        while ($row = mysqli_fetch_assoc($result_data)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
+}
+
+# Count searched records found
+function count_search($conn, $id, $keyword) {
+    $sql = "SELECT * FROM order_status WHERE customer_id = ? AND order_id LIKE ?;";
+    $stmt = mysqli_stmt_init($conn);
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        header ("location: ../order_history.php?error=stmt_failed");
+        exit();
+    }
+    else {
+        # Bind  parameters to the placeholder
+        mysqli_stmt_bind_param($stmt, "is", $id, $keyword);
+        # Run parameters inside database
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_store_result($stmt);
+        # Get the total number of records
+        $count_order = mysqli_stmt_num_rows($stmt);
+        mysqli_stmt_free_result($stmt);
+        mysqli_stmt_close($stmt);
+        return $count_order;
+    }
+}
+
+# Check search keyword contain other than numbers
+function invalid_search_order($keyword) {
+    if (!ctype_digit($keyword)) {
+        return false;
+    }
+    else {
+        return $keyword;
     }
 }

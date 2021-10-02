@@ -2,13 +2,10 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["id"])){
-    ?>
-    <script type = 'text/javascript'>
-    alert('Please login first!')
-    window.location.href = '../login.php'
-    </script>
-    <?php
+# Throw out user if not logged in to login page
+if (!isset($_SESSION["id"])) {
+    header("location: ../login.php?user=login_first");
+    die;
 }
 
 if (isset($_POST["submit"])) {

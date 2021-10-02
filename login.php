@@ -32,13 +32,13 @@
 					# Login form error message
 						if(isset($_GET["error"])) {
 							if ($_GET["error"] == "empty_input") {
-								echo "<p>*Must include email and password!</p>";
+								echo "<p class='error'>*Must include email and password!</p>";
 							}
 							else if ($_GET["error"] == "invalid_credetial") {
-								echo "<p>*Email adress and password did not match!</p>";
+								echo "<p class='error'>*Email adress and password did not match!</p>";
 							}
 							else if ($_GET["error"] == "stmt_failed") {
-								echo "<p>*Something went wrong! Please try again.</p>";
+								echo "<p class='error'>*Something went wrong! Please try again.</p>";
 							}
 						}
 					?>
@@ -56,5 +56,18 @@
 	</div>
 
 </body>
+						
+<?php
+	# If user access login required page without session, alert to login first
+	if (isset($_GET["user"])) {
+		if ($_GET["user"] == "login_first") {
+			?>
+				<script type = 'text/javascript'>
+					alert('Please login first!')
+				</script> 
+			<?php
+		}
+	}
+?>
 
 </html>

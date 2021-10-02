@@ -31,13 +31,13 @@
                     <?php
 						if(isset($_GET["error"])) {
 							if ($_GET["error"] == "empty_input") {
-								echo "<p>*All fields are required!</p>";
+								echo "<p class='error'>*All fields are required!</p>";
 							}
 							else if ($_GET["error"] == "invalid_price") {
-								echo "<p>Only numbers/integers!</p>";
+								echo "<p class='error'>Only numbers/integers!</p>";
 							}
 							else if ($_GET["error"] == "stmt_failed") {
-								echo "<p>*Something went wrong! Please try again.</p>";
+								echo "<p class='error'>*Something went wrong! Please try again.</p>";
 							}
 						}
 					?>

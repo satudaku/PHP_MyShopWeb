@@ -25,8 +25,8 @@
 			<div class="input-form">
 				<h1>Prepaid Balance</h1>
 				<form action="include/topup_balance.inc.php" method="post" class="form">
-					<label for="mobile_no">081</label>
-					<input class="input-text mobile_no" type="tel" name="mobile_no" placeholder="Mobile Number">
+					<input class="input-text mobile-no fixed" value="081">
+					<input class="input-text mobile-no" type="tel" name="mobile_no" placeholder="Mobile Number">
 					<select class="input-select" name="balance_value">
 						<option value="" selected disabled hidden>Choose Value</option>
 						<option value="10000">10.000</option>
@@ -36,13 +36,13 @@
 					<?php
 						if(isset($_GET["error"])) {
 							if ($_GET["error"] == "empty_input") {
-								echo "<p>*All fields are required!</p>";
+								echo "<p class='error'>*All fields are required!</p>";
 							}
 							else if ($_GET["error"] == "invalid_mobile_no") {
-								echo "<p>*Mobile number can only be 7 to 12 digits of numbers!</p>";
+								echo "<p class='error'>*Mobile number can only be 7 to 12 digits of numbers!</p>";
 							}
 							else if ($_GET["error"] == "stmt_failed") {
-								echo "<p>*Something went wrong! Please try again.</p>";
+								echo "<p class='error'>*Something went wrong! Please try again.</p>";
 							}
 						}
 					?>
@@ -58,5 +58,18 @@
 
 	</div>
 </body>
+
+<?php
+	# If user access no login required page with session, alert to logout first
+	if (isset($_GET["user"])) {
+		if ($_GET["user"] == "logout_first") {
+			?>
+				<script type = 'text/javascript'>
+					alert('Please logout first!')
+				</script> 
+			<?php
+		}
+	}
+?>
 
 </html>

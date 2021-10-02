@@ -30,19 +30,19 @@
 					# Register form error handling
 						if(isset($_GET["error"])) {
 							if ($_GET["error"] == "empty_input") {
-								echo "<p>*Must include email and password!</p>";
+								echo "<p class='error'>*Must include email and password!</p>";
 							}
 							else if ($_GET["error"] == "invalid_email") {
-								echo "<p>*Invalid email adress!</p>";
+								echo "<p class='error'>*Invalid email adress!</p>";
 							}
 							else if ($_GET["error"] == "email_already_exist") {
-								echo "<p>*The email adress already exist, try to login with it!</p>";
+								echo "<p class='error'>*The email adress already exist, try to login with it!</p>";
 							}
 							else if ($_GET["error"] == "invalid_password") {
-								echo "<p>*Password must be between 6 to 18 charachters!</p>";
+								echo "<p class='error'>*Password must be between 6 to 18 charachters!</p>";
 							}
 							else if ($_GET["error"] == "stmt_failed") {
-								echo "<p>*Something went wrong! Please try again.</p>";
+								echo "<p class='error'>*Something went wrong! Please try again.</p>";
 							}
 						}
 					?>

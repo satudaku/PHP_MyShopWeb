@@ -29,13 +29,13 @@
 				<h1>Success</h1>
                 </br>
                 </br>
-				<table style="width:300px" align="center">
+				<table class="table-summary">
 					<tr>
-						<td>Order no:</td>
+						<td><p style="text-align:right">Order no:</p></td>
 						<td><?php echo $_SESSION["order_id"]; ?></td>
 					</tr>
 					<tr>
-						<td>Total:</td>
+						<td><p style="text-align:right">Total:</p></td>
 						<td>RP. <?php 	if ($order_topup_id != false) {
 									  		echo $balance_value;
 										}
@@ -49,26 +49,20 @@
 						if ($order_topup_id != false) {
 							?>
 							<tr>
-								<td colspan="2">Prepaid balance that costs <?php echo $balance_value?> for mobile number: </td>
+								<td colspan="2"><p style="text-align:center">Prepaid balance that costs <?php echo $balance_value?> for mobile number: <?php echo $mobile_no ?></p></td>
 							</tr>
 							<tr>
-								<td colspan="2"><?php echo $mobile_no ?></td>
-							</tr>
-							<tr>
-								<td colspan="2"><p>Pay before: <?php echo $payment_due_time;?></p> </td>
+								<td colspan="2"><p class="warning">Pay before: <?php echo $payment_due_time;?></p> </td>
 							</tr>
 							<?php
 						}
 						else if ($order_product_id != false) {
 							?>
 							<tr>
-								<td colspan="2"><?php echo $product?> that costs <?php echo $product_price?> will be shipped to: </td>
+								<td colspan="2"><p style="text-align:center"><?php echo $product?> that costs Rp.<?php echo $product_price?> will be shipped to: <?php echo $shipping_address?></p></td>
 							</tr>
 							<tr>
-								<td colspan="2"><?php echo $shipping_address?></td>
-							</tr>
-							<tr>
-								<td colspan="2"><p>Pay before: <?php echo $payment_due_time;?></p> </td>
+								<td colspan="2"><p class="warning">Pay before: <?php echo $payment_due_time;?></p> </td>
 							</tr>
 							<?php
 						}

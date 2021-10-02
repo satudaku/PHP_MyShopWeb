@@ -25,11 +25,17 @@
 		<section class="main-content">
 			<div class="input-form">
 				<h1>Order History</h1>
-                <table>
-                    <?php
-                        require_once 'include/order_history.inc.php'
-                    ?>
-                </table>
+				<div class="search-container">
+					<form class="search-bar" action="order_history.php" method="get">
+						<input class="input-text" type="text" name="search" <?php 
+							if (isset($_GET['search'])) { echo 'value="' . $_GET['search']; } 
+							else {echo 'placeholder="Search by order no.';}?>">
+						<button class="input-button" type="submit">Search</button>
+					</form>
+				</div>
+				<?php
+					require_once 'include/order_history.inc.php'
+				?>
 			</div>
 		</section>
 

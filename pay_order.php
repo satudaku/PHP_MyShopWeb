@@ -26,28 +26,35 @@
 			<div class="input-form">
 				<h1>Pay Your Order</h1>
 				<form action="include/pay_order.inc.php" method="post" class="form">
-					<input class="input-text" type="text" name="order_id" <?php
-						if (!isset($_SESSION["order_id"])) {echo 'placeholder="Order no. here"';} else {echo 'value="' . $_SESSION["order_id"] . '"';}?>">
+					<input class="input-text" type="text" name="order_id"
+						<?php
+							# Order id input form value
+							# Either get it from user input, link, or SESSION
+							if (isset($_GET["order_id"])) {echo 'value="' . $_GET["order_id"];} 
+							else if (isset($_SESSION["order_id"])) {echo 'value="' . $_SESSION["order_id"];}
+							else {echo 'placeholder="Order no. here';}
+						?>
+					">
 					<?php
 					# Login form error message
 						if(isset($_GET["error"])) {
 							if ($_GET["error"] == "empty_input") {
-								echo "<p>*Required field!</p>";
+								echo "<p class='error'>*Required field!</p>";
 							}
 							else if ($_GET["error"] == "invalid_order_id") {
-								echo "<p>*Invalid order no.!</p>";
+								echo "<p class='error'>*Invalid order no.!</p>";
 							}
 							else if ($_GET["error"] == "stmt_failed") {
-								echo "<p>*Something went wrong! Please try again.</p>";
+								echo "<p class='error'>*Something went wrong! Please try again.</p>";
 							}
 							else if ($_GET["error"] == "already_paid") {
-								echo "<p>*Order already been paid!</p>";
+								echo "<p class='error'>*Order already been paid!</p>";
 							}
 							else if ($_GET["error"] == "order_cancelled") {
-								echo "<p>*Order cancelled! Please order again.</p>";
+								echo "<p class='error'>*Order cancelled! Please order again.</p>";
 							}
 							else if ($_GET["error"] == "payment_overtime") {
-								echo "<p>*Payment overdue! order cancelled.</p>";
+								echo "<p class='error'>*Payment overdue! order cancelled.</p>";
 							}
 						}
 					?>

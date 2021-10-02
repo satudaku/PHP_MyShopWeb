@@ -1,5 +1,7 @@
 @charset "UTF-8";
-/* General Styling */
+/*==================================================
+|	General CSS                                     |	
+====================================================*/
 * {
 	box-sizing: border-box;
 }
@@ -18,8 +20,9 @@ body {
 
 /* For full Height */
 .main-content {
-	height: 75vh;
+	min-height: 79vh;
 }
+
 /* Container */
 .container {
 	width: 90%;
@@ -27,66 +30,100 @@ body {
 	margin-right: auto;
 	background-color: #FFFFFF;
 }
-/* Navigation */
-header {
+
+/* Utility Class */
+.hidden {
+	display: none;
+}
+
+.header-mobile {
+	display: none;
+}
+
+/*==================================================
+|	Header		                                    |	
+====================================================*/
+.header-row {
 	display: flex;
-	justify-content: space-between;
+	padding: 0 25px;
 	background-color: #52bad5;
 	border-bottom: 1px solid #2C9AB7;
 	height: 15vh;
 	align-items: center;
 }
-.logo {
-	font-size: 18px;
+
+.header-column {
+	width: 50%;
+}
+
+.header-logo {
+	font-size: 25px;
 	text-decoration: unset;
 	color: #fff;
 	font-weight: bold;
 	margin-left: 25px;
 	letter-spacing: 4px;
 }
-.header-nav {
+
+.header-user {
+	color: #fff;
+	font-size: 14px;
+	letter-spacing: 2px;
+	font-weight: bold;
 	text-align: right;
+	margin-top: 0;
 	margin-right: 25px;
 }
+
+.header-user .user-logout {
+	color: #fff;
+	text-decoration: none;
+}
+
+/* Navigation */
+.header-nav {
+	float: right;
+	margin-right: 25px;
+}
+
 .header-nav ul {
 	margin: 0;
 	list-style-type: none;
 }
+
 .header-nav ul li {
-	float: left;
-	color: #FFFFFF;
-	font-size: 14px;
-	text-align: left;
-	margin-right: 25px;
-	letter-spacing: 2px;
-	font-weight: bold;
-	transition: all 0.3s linear;
+	display: inline-block;
+	transition: all 0.3s ease-in-out;
 }
+
 .header-nav ul li a, 
 .header-nav ul li p {
 	color: #FFFFFF;
+	font-size: 14px;
+	letter-spacing: 2px;
+	font-weight: bold;
 	text-decoration: none;
 	margin: 0;
 }
 
-.header-nav ul li a:hover {
+.header-nav ul li p.divider {
+	margin: 0 25px;
+}
+
+/* Link hover styling */
+.header-nav ul li a:hover,
+.header-user .user-logout:hover {
 	color: #2C9AB7;
 }
 
 /*==================================================
 |	Internal                                       |	
 ====================================================*/
-
 /* Main Content Section */
 .main-content {
 	background-color: #FFFFFF;
-	padding-top: 50px;
-	padding-bottom: 150px;
-}
-
-/* input form styling */
-.input-form {
-	margin-top: 5%;
+	padding-top: 10vh;
+	padding-bottom: 15vh;
 }
 
 /* Typography */
@@ -100,14 +137,17 @@ header {
 	margin-left: 0px;
 	letter-spacing: 4px;
 }
+
 .main-content a {
 	font-weight: bold;
 	color: #52BAD5;
 }
+
 .main-content a:hover {
-	color: #258199;
+	color: #2C9AB7;
 }
-.main-content p {
+
+.main-content p.error {
 	color: #d55252;
 	text-align: center;
 }
@@ -119,7 +159,10 @@ header {
 	margin: 0 auto;
 }
 
-.input-text, .input-select, .input-button {
+.input-text, 
+.input-select, 
+.input-button,
+.pay-button {
 	width: 100%;
 	display: block;
 	margin-bottom: 10px;
@@ -128,18 +171,36 @@ header {
 	border-radius: 5px;
 }
 
-.input-text.mobile_no {
+.input-text.mobile-no {
 	display: inline-block;
 }
 
-.input-button {
-	width: 324px !important;
+.input-text.mobile-no {
+	width: 83.5%;
+}
+
+.input-text.mobile-no.fixed {
+	width: 15%;
+	text-align: center;
+	pointer-events: none;
+}
+
+.input-button{
 	background-color: #52BAD5;
 	border: 0 !important;
 	color: #FFFFFF;
 	margin-top: 40px !important;
 	margin-bottom: 30px !important;
 }
+
+.pay-button{
+	background-color: #52BAD5;
+	border: 0 !important;
+	color: #FFFFFF;
+	margin-top: 10px !important;
+	margin-bottom: 10px !important;
+}
+
 .input-button:hover {
 	background-color: #258199;
 	cursor: pointer;
@@ -154,25 +215,149 @@ header {
 /* Footer Styling */
 footer {
 	display: flex;
-	position: absolute;
-	height: 10vh;
-	width: 90%;
+	position: relative;
+	height: 6vh;
+	width: 100%;
 	justify-content: center;
 	align-items: center;
 	background-color: #717070;
 	color: #FFFFFF;
 	letter-spacing: 2px;
 	border-top-width: 2px;
-}	
-
-/* Utility Class */
-.hidden {
-	display: none;
 }
 
-.header-mobile {
-	display: none;
+/* Order Summary Typhography */
+.table-summary p {
+	text-align: center;
 }
+
+.table-summary p.warning {
+	color: #d55252;
+}
+
+/* Order History Typhography */
+.table-history p {
+	text-align: center;
+}
+
+.table-history span.price {
+	text-align: right;
+	font-weight: bold;
+}
+
+.table-history p.failed {
+	color: orange;
+}
+
+.table-history p.cancelled {
+	color: #d55252;
+}
+
+.table-history p.success {
+	color: greenyellow;
+}
+
+.table-history p span.code {
+	color: black;
+	font-weight: bold;
+}
+
+
+/* Search Bar */
+.search-container {
+	width: 700px;
+	margin: auto;
+}
+
+.search-bar .input-text {
+	display: inline-block;
+	width: 75.3%;
+}
+
+.search-bar .input-button {
+	display: inline-block;
+	width: 24%;
+}
+
+/* Order History Pagination */
+.pagination {
+	list-style-type: none;
+	display: flex;
+	width: 700px;
+	padding: 10px 0;
+	margin: 20px auto 0;
+	justify-content: end;
+}
+
+.pagination li {
+	padding-right: 10px;
+}
+
+.pagination li a {
+	background-color: #e2e6e6;
+	padding: 8px;
+	text-decoration: none;
+	font-size: 12px;
+	font-weight: bold;
+	color: #616872;
+	border-radius: 4px;
+}
+
+.pagination li a:hover {
+	background-color: #d4dada;
+}
+
+.pagination .next a, .pagination .prev a {
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+.pagination .currentpage a {
+	background-color: #52BAD5;
+	color: #fff;
+}
+
+.pagination .currentpage a:hover {
+	background-color: #2C9AB7;
+}
+
+/* Table */
+table {
+	border-collapse: collapse;
+	width: 700px;
+	margin: auto;
+}
+
+td, 
+th {
+	padding: 10px;
+}
+
+th {
+	background-color: #54585d0e;
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 13px;
+	border: 1px solid #54585d;
+}
+
+td {
+	color: #636363;
+	border: 1px solid #dddfe1;
+}
+
+tr {
+	background-color: #f9fafb;
+}
+
+tr:nth-child(odd) {
+	background-color: #7571712c;
+}
+
+td .order-info {
+	min-width: 95%;
+}
+
 
 /* Resposive for 981px and 1024 Screen */
 @media screen and (min-width: 981px) and (max-width: 1099px) {
@@ -265,27 +450,35 @@ footer {
 	}
 }
 
-/* Small Desktops */
-@media ( min-width : 768px ) and (max-width : 981px ){
-.text_column {
-	width: 100%;
+/* For Mobile and Tablet */
+@media only screen and (max-width: 980px) {
+	.text_column {
+		width: 100%;
+	}
+
+	.thumbnail {
+		width: 50%;
+	}
+
+	.text_column {
+		width: 100%;
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		padding-top: 0px;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+	}
+
+	.banner {
+		margin-top: 0px;
+		padding-top: 0px;
+	}
 }
-.thumbnail {
-	width: 50%;
-}
-.text_column {
-	width: 100%;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-}
-.banner {
-	margin-top: 0px;
-	padding-top: 0px;
-}
+
+/* 981px & 1024px screen fix */
+@media only screen and (min-width: 981px) and (max-width: 1099px){
+
 }
