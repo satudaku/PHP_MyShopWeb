@@ -1,7 +1,7 @@
 # PHP_MyShopWeb
 Develop E-commerce website using PHP and SQL for database.
 ## Instruction
-
+Development instruction is based on '**PHP_Developer_Test.pdf**' file. 
 
 ## Installation (For windows)
 1. Download and install latest XAMPP from [here](https://www.apachefriends.org/index.html).
@@ -17,5 +17,9 @@ Develop E-commerce website using PHP and SQL for database.
 11. After successfully importing the database, you can type in address bar **localhost/myshopweb/login.php** or if you name the folder differently: **localhost/[new folder name here]/login.php**
 12. You should be able to browse MyShop website.
 
-## Credentials
+## Login Credentials
 You can create a new user from register.php page or using:
+```
+email: a@a.a
+password: 123456
+```
