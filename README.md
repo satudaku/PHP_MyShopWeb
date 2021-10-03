@@ -23,3 +23,6 @@ You can create a new user from register.php page or using:
 email: a@a.a
 password: 123456
 ```
+
+## Disclaimer
+I did not make or own '**PHP_Developer_Test.pdf**' file. 
