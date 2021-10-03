@@ -259,7 +259,7 @@ footer {
 }
 
 .table-history p.success {
-	color: greenyellow;
+	color: rgb(132, 197, 26);
 }
 
 .table-history p span.code {
@@ -352,6 +352,8 @@ td {
 }
 
 tr {
+	border-left-style: hidden;
+	border-right-style: hidden;
 	background-color: #f9fafb;
 }
 

@@ -20,7 +20,7 @@ if (isset($_POST["submit"])) {
         header("location: ../pay_order.php?error=empty_input");
         die();
     }
-
+    
     pay_order($conn, $id, $order_id);
 
 }

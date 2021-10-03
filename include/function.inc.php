@@ -482,7 +482,6 @@ function pay_order($conn, $id, $order_id) {
         die();
     }
 
-    echo "order id: " . $order_id;
     # Check wether order_id exist and has match the customer id
     $order_id_exist = order_id_exist($conn, $order_id);
     if ($order_id_exist === false && $order_id_exist["customer_id"] !== $id) {
@@ -511,6 +510,7 @@ function pay_order($conn, $id, $order_id) {
             exit();
         }
         else {
+
             # Update order_paid_time in order_status table to current time
             $sql = "UPDATE order_status SET order_paid_time = ? WHERE order_id = ?;";
             $stmt = mysqli_stmt_init($conn);
@@ -524,10 +524,42 @@ function pay_order($conn, $id, $order_id) {
                 mysqli_stmt_execute($stmt);
             }
 
-            # Update order_status to paid
-            $updated_order_status = "paid";
+            # Topup balance transaction have a chance to fail
+            if ($order_id_exist["order_topup_id"] != null) {
+                $transaction_status = transaction_failed($order_paid_time);
+                # If transaction failed
+                if ($transaction_status === false) {
+                    # Update order_status to paid
+                    $updated_order_status = "failed";
+                }
+                # Else transaction goes tru
+                else {
+                    # Update order_status to paid
+                    $updated_order_status = "paid"; 
+                }
+            }
+
             change_order_status($conn, $order_id, $updated_order_status);
-            header("location: ../order_history.php");
+            # If transaction failed, return user to topup balance page
+            if ($transaction_status = "failed") {
+                ?>
+                    <script type = 'text/javascript'>
+                    alert('Transaction Failed please try again!')
+                    window.location.href = '../topup_balance.php?error=failed'
+                    </script>
+                <?php
+                exit();
+            }
+            # Else transaction success, return user to order history page
+            else {
+                ?>
+                    <script type = 'text/javascript'>
+                    alert('Order paid successfully!')
+                    window.location.href = '../order_history.php'
+                    </script>
+                <?php
+                exit();
+            }
         }
     }
 }
@@ -562,6 +594,30 @@ function change_order_status($conn, $order_id, $updated_order_status) {
         # Run parameters inside database
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
+    }
+}
+
+# Topup balance transaction have a chance to fail
+# If paid within 9AM to 5PM, success rate is 90% (otherwise 40%)
+function transaction_failed($order_paid_time) {
+    $chance = mt_rand(0, 99) / 100;
+    $open_time = new DateTime("09:00:00");
+    $close_time = new DateTime("17:00:00");
+    if ($open_time < $order_paid_time && $order_paid_time > $close_time) {
+        if ($chance < 1/10) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    else {
+        if ($chance < 6/10) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }
 

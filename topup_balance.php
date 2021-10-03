@@ -44,6 +44,9 @@
 							else if ($_GET["error"] == "stmt_failed") {
 								echo "<p class='error'>*Something went wrong! Please try again.</p>";
 							}
+							else if ($_GET["error"] == "failed") {
+								echo "<p class='error'>*If paid within 9AM to 5PM, success rate is 90% (otherwise 40%).</p>";
+							}
 						}
 					?>
 					<input class="input-button" type="submit" value="Submit" name="submit">
