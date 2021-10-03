@@ -13,6 +13,10 @@ $num_result_on_page = 5;
 
 # If the user uses search bar
 if (isset($_GET['search'])) {
+    # If 'no result' error parameter was given
+    if (isset($_GET['error']) && $_GET['error'] === 'no_result') {
+        echo "<p class='error'>No order found!</p>";
+    }
     if (empty($_GET['search'])) {
         header('location:order_history.php');
         exit();
@@ -31,25 +35,37 @@ if (isset($_GET['search'])) {
             # Get order data
             $get_order = search_order($conn, $id, $keyword, $page, $num_result_on_page);
         }
+        else {
+            $get_order = false;
+        }
     }
 }
 # Else show all records with given SESSION ID
 else {
-    # Get the total number of records
-    $count_order = count_order($conn, $id);
-    if ($count_order > 0) {
-        # Get order data
-        $get_order = get_order($conn, $id, $page, $num_result_on_page);
+    # If 'no result' error parameter was given alert no order found
+    if (isset($_GET['error']) && $_GET['error'] === 'no_result') {
+        echo "<p class='error'>No order found!</p>";
+    }
+    else {
+        # Get the total number of records
+        $count_order = count_order($conn, $id);
+        if ($count_order > 0) {
+            # Get order data
+            $get_order = get_order($conn, $id, $page, $num_result_on_page);
+        }
+        else {
+            header("location:order_history.php?error=no_result");
+            exit();
+        }
     }
 }
 
-if (isset($_GET['error']) && $_GET['error'] === 'no_result') {
-    echo "<p class='error'>No order found!</p>";
-}
-else if (isset($_GET['error']) && $_GET['error'] === 'invalid_search') {
+
+# If input wrong character
+if (isset($_GET['error']) && $_GET['error'] === 'invalid_search') {
     echo "<p class='error'>Invalid input! Numbers only.</p>";
 }
-else {
+else if (!isset($_GET['error'])) {
     # If order data empty return error message
     if ($get_order == false){
         header("location:order_history.php?search=" . $_GET['search'] . "&error=no_result");

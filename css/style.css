@@ -206,6 +206,11 @@ body {
 	cursor: pointer;
 }
 
+.pay-button:hover {
+    background-color: #258199;
+    cursor: pointer;
+}
+
 /* Register Page Styling */
 .main-content a.link {
 	display: block;
