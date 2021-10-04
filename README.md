@@ -1,5 +1,5 @@
 # PHP_MyShopWeb
-Develop E-commerce website using PHP and SQL for database.
+Develop e-commerce website using PHP and SQL for database.
 ## Instruction
 Development instruction is based on '**PHP_Developer_Test.pdf**' file. 
 
